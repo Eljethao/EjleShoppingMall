@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MyDialog {
-  Future<void> alertLocationService(BuildContext context,String title, String message) async {
+  Future<void> alertLocationService(
+      BuildContext context, String title, String message) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -26,7 +27,7 @@ class MyDialog {
           ),
           actions: [
             TextButton(
-              onPressed: () async{
+              onPressed: () async {
                 //Navigator.pop(context);
                 await Geolocator.openLocationSettings();
                 exit(0);
@@ -34,6 +35,30 @@ class MyDialog {
               child: Text('OK'),
             ),
           ]),
+    );
+  }
+
+  Future<void> normalDialog(
+      BuildContext context, String title, String message) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: ListTile(
+          leading: ShowImage(pathImage: MyConstant.image2),
+          title: ShowTitle(
+            title: title,
+            textStyle: MyConstant().h2Style(),
+          ),
+          subtitle:
+              ShowTitle(title: message, textStyle: MyConstant().h3Style()),
+        ),
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          )
+        ],
+      ),
     );
   }
 }

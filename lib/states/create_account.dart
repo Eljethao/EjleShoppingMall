@@ -1,6 +1,8 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_collection_literals
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_collection_literals, avoid_print
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:eljeshoppingmall/utility/my_constant.dart';
 import 'package:eljeshoppingmall/utility/my_dialog.dart';
 import 'package:eljeshoppingmall/widgets/show_image.dart';
@@ -20,8 +22,16 @@ class CreateAccount extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccount> {
   String? typeUser;
+  String avatar = '';
   File? file;
   double? lat, lng;
+  final formKey = GlobalKey<FormState>();
+
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController userController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
@@ -90,40 +100,123 @@ class _CreateAccountState extends State<CreateAccount> {
       appBar: AppBar(
         title: Text('Create New Account'),
         backgroundColor: MyConstant.primary,
+        actions: [buildCreateNewAccount()],
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         behavior: HitTestBehavior.opaque,
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: [
-            buildTitle('ຂໍ້ມູນທົ່ວໄປ :'),
-            buildName(size),
-            buildTitle('ປະເພດຂອງ User :'),
-            buildRadioBuyer(size),
-            buildRadioSeller(size),
-            buildRadioRider(size),
-            buildTitle('ຂໍ້ມູນພື້ນຖານ'),
-            buildAddress(size),
-            buildPhone(size),
-            buildUser(size),
-            buildPassword(size),
-            buildTitle('ຮູບພາບ'),
-            buildSubTitle(),
-            buildAvatar(size),
-            buildTitle('ສະແດງທີ່ຢູ່ຂອງທ່ານ'),
-            buildMap(),
-          ],
+        child: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                buildTitle('ຂໍ້ມູນທົ່ວໄປ :'),
+                buildName(size),
+                buildTitle('ປະເພດຂອງ User :'),
+                buildRadioBuyer(size),
+                buildRadioSeller(size),
+                buildRadioRider(size),
+                buildTitle('ຂໍ້ມູນພື້ນຖານ'),
+                buildAddress(size),
+                buildPhone(size),
+                buildUser(size),
+                buildPassword(size),
+                buildTitle('ຮູບພາບ'),
+                buildSubTitle(),
+                buildAvatar(size),
+                buildTitle('ສະແດງທີ່ຢູ່ຂອງທ່ານ'),
+                buildMap(),
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  IconButton buildCreateNewAccount() {
+    return IconButton(
+      onPressed: () {
+        if (formKey.currentState!.validate()) {
+          if (typeUser == null) {
+            MyDialog().normalDialog(context, 'ຍັງບໍໄດ້ເລືອກປະເພດ User',
+                'ກະລຸນາເລືອກປະເພດຂອງ User ທີ່ຕ້ອງການກ່ອນ');
+          } else {
+            uploadPictureAndInsertData();
+          }
+        }
+      },
+      icon: Icon(Icons.cloud_upload),
+    );
+  }
+
+  Future<void> uploadPictureAndInsertData() async {
+    String name = nameController.text;
+    String address = addressController.text;
+    String phone = phoneController.text;
+    String user = userController.text;
+    String password = passwordController.text;
+    
+
+    print(
+        'name = $name, address = $address, phone = $phone, user = $user, password = $password');
+    String path =
+        '${MyConstant.domain}/eljeshoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
+    await Dio().get(path).then((value) async {
+      print('value ==>> $value');
+      if (value.toString() == 'null') {
+        print('## user OK');
+
+        if (file == null) {
+          //do not have Avatar
+          processInsertMySql(name: name,address: address,phone: phone,user: user,password: password);
+        } else {
+          //have Avatar
+          print('### process Upload Avatar');
+          String apiSaveAvatar =
+              '${MyConstant.domain}/eljeshoppingmall/saveAvatar.php?';
+          int i = Random().nextInt(100000);
+          String nameAvatar = 'avatar$i.jpg';
+          Map<String, dynamic> map = Map();
+          map['file'] =
+              await MultipartFile.fromFile(file!.path, filename: nameAvatar);
+          FormData data = FormData.fromMap(map);
+          await Dio().post(apiSaveAvatar, data: data).then((value) {
+            avatar = '/eljeshoppingmall/avatar/$nameAvatar';
+            processInsertMySql(name: name,address: address,phone: phone,user: user,password: password);
+          });
+        }
+      } else {
+        MyDialog().normalDialog(context, 'User Failed', 'Please Change User');
+      }
+    });
+  }
+
+  Future<void> processInsertMySql(
+      {String? name,
+      String? address,
+      String? phone,
+      String? user,
+      String? password}) async {
+    print('### processInsertMySql Worked and avatar ==>> $avatar');
+    String apiInsertUser =
+        '${MyConstant.domain}/eljeshoppingmall/insertUser.php?isAdd=true&name=$name&type=$typeUser&address=$address&phone=$phone&user=$user&password=$password&avatar=$avatar&lat=$lat&lng=$lng';
+    await Dio().get(apiInsertUser).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context);
+      } else {
+        MyDialog().normalDialog(
+            context, 'Create new user failed !!!', 'Please try again');
+      }
+    });
   }
 
   Set<Marker> setMarker() => <Marker>[
         Marker(
           markerId: MarkerId('id'),
           position: LatLng(lat!, lng!),
-          infoWindow: InfoWindow(title: 'ທ່ານຢູ່ທີ່່ນີ້',snippet: 'Lat = $lat, Lng = $lng'),
+          infoWindow: InfoWindow(
+              title: 'ທ່ານຢູ່ທີ່່ນີ້', snippet: 'Lat = $lat, Lng = $lng'),
         )
       ].toSet();
 
@@ -206,22 +299,28 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: passwordController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'ກະລຸນາປ້ອນລະຫັດຜ່ານກ່ອນ';
+                }
+              },
               decoration: InputDecoration(
-            labelText: 'Password : ',
-            labelStyle: MyConstant().h3Style(),
-            prefixIcon: Icon(
-              Icons.lock_outline,
-              color: MyConstant.dark,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dark),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.light),
-              borderRadius: BorderRadius.circular(30),
-            ),
-          )),
+                labelText: 'Password : ',
+                labelStyle: MyConstant().h3Style(),
+                prefixIcon: Icon(
+                  Icons.lock_outline,
+                  color: MyConstant.dark,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.dark),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.light),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              )),
         ),
       ],
     );
@@ -235,22 +334,28 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: userController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'ກະລຸນາປ້ອນຊື່ User ກ່ອນ';
+                }
+              },
               decoration: InputDecoration(
-            labelText: 'User : ',
-            labelStyle: MyConstant().h3Style(),
-            prefixIcon: Icon(
-              Icons.perm_identity,
-              color: MyConstant.dark,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dark),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.light),
-              borderRadius: BorderRadius.circular(30),
-            ),
-          )),
+                labelText: 'User : ',
+                labelStyle: MyConstant().h3Style(),
+                prefixIcon: Icon(
+                  Icons.perm_identity,
+                  color: MyConstant.dark,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.dark),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.light),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              )),
         ),
       ],
     );
@@ -264,22 +369,29 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: phoneController,
+              keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'ກະລຸນາປ້ອນເບີໂທລະສັບກ່ອນ';
+                }
+              },
               decoration: InputDecoration(
-            labelText: 'Phone : ',
-            labelStyle: MyConstant().h3Style(),
-            prefixIcon: Icon(
-              Icons.phone,
-              color: MyConstant.dark,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dark),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.light),
-              borderRadius: BorderRadius.circular(30),
-            ),
-          )),
+                labelText: 'Phone : ',
+                labelStyle: MyConstant().h3Style(),
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: MyConstant.dark,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.dark),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.light),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              )),
         ),
       ],
     );
@@ -293,6 +405,12 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: addressController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'ກະລຸນາປ້ອນທີ່ຢູ່ກ່ອນ';
+                }
+              },
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Address',
@@ -399,33 +517,39 @@ class _CreateAccountState extends State<CreateAccount> {
       ),
     );
   }
-}
 
-Row buildName(double size) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Container(
-        margin: EdgeInsets.only(top: 16),
-        width: size * 0.6,
-        child: TextFormField(
-            decoration: InputDecoration(
-          labelText: 'Name : ',
-          labelStyle: MyConstant().h3Style(),
-          prefixIcon: Icon(
-            Icons.fingerprint,
-            color: MyConstant.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: MyConstant.dark),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: MyConstant.light),
-            borderRadius: BorderRadius.circular(30),
-          ),
-        )),
-      ),
-    ],
-  );
+  Row buildName(double size) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: 16),
+          width: size * 0.6,
+          child: TextFormField(
+              controller: nameController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'ກະລຸນາປ້ອນຊື່ກ່ອນ';
+                }
+              },
+              decoration: InputDecoration(
+                labelText: 'Name : ',
+                labelStyle: MyConstant().h3Style(),
+                prefixIcon: Icon(
+                  Icons.fingerprint,
+                  color: MyConstant.dark,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.dark),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.light),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              )),
+        ),
+      ],
+    );
+  }
 }

@@ -1,6 +1,11 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:eljeshoppingmall/models/user_model.dart';
 import 'package:eljeshoppingmall/utility/my_constant.dart';
+import 'package:eljeshoppingmall/utility/my_dialog.dart';
 import 'package:eljeshoppingmall/widgets/show_image.dart';
 import 'package:eljeshoppingmall/widgets/show_title.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +19,9 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   bool statusRedEye = true;
+  final formKey = GlobalKey<FormState>();
+  TextEditingController userController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +31,18 @@ class _AuthenState extends State<Authen> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-          child: ListView(
-            children: [
-              buildImage(size),
-              buildAppName(),
-              buildUser(size),
-              buildPassword(size),
-              buildLogin(size),
-              buildCreateAccount(),
-            ],
+          child: Form(
+            key: formKey,
+            child: ListView(
+              children: [
+                buildImage(size),
+                buildAppName(),
+                buildUser(size),
+                buildPassword(size),
+                buildLogin(size),
+                buildCreateAccount(),
+              ],
+            ),
           ),
         ),
       ),
@@ -64,12 +75,58 @@ class _AuthenState extends State<Authen> {
           width: size * 0.6,
           child: ElevatedButton(
             style: MyConstant().myButtonStyle(),
-            onPressed: () {},
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                String user = userController.text;
+                String password = passwordController.text;
+                print('user = $user, password = $password');
+                checkAuthen(user: user, password: password);
+              }
+            },
             child: Text('Login'),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> checkAuthen({String? user, String? password}) async {
+    String apiCheckAuthen =
+        '${MyConstant.domain}/eljeshoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
+    await Dio().get(apiCheckAuthen).then((value) {
+      print('### value for API ==> $value');
+      if (value.toString() == 'null') {
+        MyDialog().normalDialog(context, 'User Faile', 'No $user in Database');
+      } else {
+        for (var item in json.decode(value.data)) {
+          UserModel model = UserModel.fromMap(item);
+          if (password == model.password) {
+            // Success Authen
+            String type = model.type;
+            print('## Authen Success in Type =>> $type');
+            switch (type) {
+              case 'buyer':
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MyConstant.routeBuyerService, (route) => false);
+                break;
+              case 'seller':
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MyConstant.routeSalerService, (route) => false);
+                break;
+              case 'rider':
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MyConstant.routeRiderService, (route) => false);
+                break;
+              default:
+            }
+          } else {
+            //Authen Fail
+            MyDialog().normalDialog(context, 'Password Fail !!!',
+                'Password incorrect Please try again');
+          }
+        }
+      }
+    });
   }
 
   Row buildUser(double size) {
@@ -80,22 +137,30 @@ class _AuthenState extends State<Authen> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: userController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please Fill User in Blank';
+                } else {
+                  return null;
+                }
+              },
               decoration: InputDecoration(
-            labelText: 'User: ',
-            labelStyle: MyConstant().h3Style(),
-            prefixIcon: Icon(
-              Icons.account_circle_outlined,
-              color: MyConstant.dark,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dark),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.light),
-              borderRadius: BorderRadius.circular(30),
-            ),
-          )),
+                labelText: 'User: ',
+                labelStyle: MyConstant().h3Style(),
+                prefixIcon: Icon(
+                  Icons.account_circle_outlined,
+                  color: MyConstant.dark,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.dark),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: MyConstant.light),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              )),
         ),
       ],
     );
@@ -109,6 +174,14 @@ class _AuthenState extends State<Authen> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+              controller: passwordController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please Fill Password in Blank';
+                } else {
+                  return null;
+                }
+              },
               obscureText: statusRedEye,
               decoration: InputDecoration(
                 suffixIcon: IconButton(
