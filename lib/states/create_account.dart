@@ -246,7 +246,7 @@ class _CreateAccountState extends State<CreateAccount> {
       setState(() {
         file = File(result!.path);
       });
-    } catch (e) {
+    } catch (e) { 
       //return;
     }
   }

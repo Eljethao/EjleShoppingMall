@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eljeshoppingmall/widgets/show_signout.dart';
 import 'package:flutter/material.dart';
 
 class RiderService extends StatefulWidget {
@@ -15,6 +16,9 @@ class _RiderServiceState extends State<RiderService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Rider'),
+      ),
+      drawer: Drawer(
+        child: ShowSignOut(),
       ),
     );
   }

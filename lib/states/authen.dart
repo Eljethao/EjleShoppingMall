@@ -9,6 +9,7 @@ import 'package:eljeshoppingmall/utility/my_dialog.dart';
 import 'package:eljeshoppingmall/widgets/show_image.dart';
 import 'package:eljeshoppingmall/widgets/show_title.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Authen extends StatefulWidget {
   const Authen({Key? key}) : super(key: key);
@@ -93,7 +94,7 @@ class _AuthenState extends State<Authen> {
   Future<void> checkAuthen({String? user, String? password}) async {
     String apiCheckAuthen =
         '${MyConstant.domain}/eljeshoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(apiCheckAuthen).then((value) {
+    await Dio().get(apiCheckAuthen).then((value) async{
       print('### value for API ==> $value');
       if (value.toString() == 'null') {
         MyDialog().normalDialog(context, 'User Faile', 'No $user in Database');
@@ -104,6 +105,11 @@ class _AuthenState extends State<Authen> {
             // Success Authen
             String type = model.type;
             print('## Authen Success in Type =>> $type');
+
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            preferences.setString('type',type);
+            preferences.setString('user', model.user);
+
             switch (type) {
               case 'buyer':
                 Navigator.pushNamedAndRemoveUntil(
