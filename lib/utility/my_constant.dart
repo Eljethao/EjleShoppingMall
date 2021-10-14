@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 class MyConstant {
   //General
   static String appName = 'Shopping Mall';
-  static String domain = 'http://a2c9-202-137-156-145.ngrok.io';
+  static String domain = 'http://c392-115-84-119-87.ngrok.io';
 
   //Route
   static String routeAuthen = '/authen';
