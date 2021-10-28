@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_print, sized_box_for_whitespace
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -94,11 +96,12 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(userModel!.name),
-      ),
-      body: load
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Text(userModel!.name),
+    //   ),
+    //   body: 
+          return load
           ? const ShowProgress()
           : haveProduct!
               ? listProduct()
@@ -107,8 +110,8 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
                     title: 'ຍັງບໍມີຂໍ້ມູນສິນຄ້າ',
                     textStyle: MyConstant().h1Style(),
                   ),
-                ),
-    );
+                );
+    //);
   }
 
   LayoutBuilder listProduct() {
@@ -321,7 +324,8 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
                     String amount = amountInt.toString();
                     int sumInt = int.parse(price) * amountInt;
                     String sum = sumInt.toString();
-                    if (currentIdSeller == idSeller || currentIdSeller == null) {
+                    if (currentIdSeller == idSeller ||
+                        currentIdSeller == null) {
                       print(
                           '### idSeller ==>> $idSeller, idProduct ==>> $idProduct, name = $name, price = $price, amount = $amount, sum = $sum');
                       SQLiteModel sqLiteModel = SQLiteModel(
@@ -337,10 +341,11 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
                         Navigator.pop(context);
                         amountInt = 1;
                       });
-                    }else{
+                    } else {
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      MyDialog().normalDialog(context, 'ຜິດຮ້ານ!!', 'ກະລຸນາສັ່ງຊື້ຈາກຮ້ານກ່ອນຫນ້ານີ້ ໃຫ້ສຳເລັດກ່ອນ');
+                      MyDialog().normalDialog(context, 'ຜິດຮ້ານ!!',
+                          'ກະລຸນາສັ່ງຊື້ຈາກຮ້ານກ່ອນຫນ້ານີ້ ໃຫ້ສຳເລັດກ່ອນ');
                     }
                   },
                   child: Text('Add to Cart', style: MyConstant().h2BlueStyle()),

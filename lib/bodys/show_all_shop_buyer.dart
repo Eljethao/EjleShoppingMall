@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:eljeshoppingmall/bodys/show_middle_shop.dart';
 import 'package:eljeshoppingmall/models/user_model.dart';
 import 'package:eljeshoppingmall/states/show_product_buyer.dart';
 import 'package:eljeshoppingmall/utility/my_constant.dart';
@@ -66,7 +67,8 @@ class _ShowAllShopBuyerState extends State<ShowAllShopBuyer> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ShowProductBuyer(userModel: userModels[index]),
+                              ShowMiddleShop(userModel: userModels[index]),
+                              //ShowProductBuyer
                         ),
                       );
                     },
