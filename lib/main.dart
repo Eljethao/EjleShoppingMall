@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:eljeshoppingmall/states/add_product.dart';
+import 'package:eljeshoppingmall/states/add_wallet.dart';
 import 'package:eljeshoppingmall/states/authen.dart';
 import 'package:eljeshoppingmall/states/buyer_service.dart';
 import 'package:eljeshoppingmall/states/create_account.dart';
+import 'package:eljeshoppingmall/states/edit_profile_saler.dart';
 import 'package:eljeshoppingmall/states/rider_service.dart';
 import 'package:eljeshoppingmall/states/saler_service.dart';
+import 'package:eljeshoppingmall/states/show_cart.dart';
 import 'package:eljeshoppingmall/utility/my_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +20,9 @@ final Map<String, WidgetBuilder> map = {
   '/salerService': (context) => SalerService(),
   '/riderService': (context) => RiderService(),
   '/addProduct': (context)=> AddProduct(),
+  '/editProfileSaler': (context) =>EditProFileSaler(),
+  '/showCart': (context)=> ShowCart(),
+  '/addWallet': (context) => AddWallet(),
 };
 
 String? initialRoute;

@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 class MyConstant {
   //General
   static String appName = 'Shopping Mall';
-  static String domain = 'http://c392-115-84-119-87.ngrok.io';
+  static String domain = 'http://b8bf-115-84-117-69.ngrok.io';
 
   //Route
   static String routeAuthen = '/authen';
@@ -14,14 +14,19 @@ class MyConstant {
   static String routeSalerService = '/salerService';
   static String routeRiderService = '/riderService';
   static String routeAddProduct = '/addProduct';
+  static String routeEditProfileSaler = '/editProfileSaler';
+  static String routeShowCart = '/showCart';
+  static String routeAddWallet = '/addWallet';
 
   //Image
-  static String image1 = 'images/Image1.png';
+  static String image1 = 'images/Image1.png'; 
   static String image2 = 'images/Image2.png';
   static String image3 = 'images/Image3.png';
   static String image4 = 'images/Image4.png';
-  static String image5 = 'images/Image5.png';
+  static String image5 = 'images/Image5.png'; 
   static String account = 'images/account.png';
+  static String empty = 'images/box.png';
+  static String question = 'images/question.png';
 
   //Color
   static Color primary =const Color(0xff87861d);
@@ -57,6 +62,18 @@ class MyConstant {
   TextStyle h2WhiteStyle() => const TextStyle(
         fontSize: 18,
         color: Colors.white,
+        fontWeight: FontWeight.w700,
+      );
+
+  TextStyle h2RedStyle() => TextStyle(
+        fontSize: 18,
+        color: Colors.red.shade600,
+        fontWeight: FontWeight.w700,
+      );
+
+  TextStyle h2BlueStyle() => TextStyle(
+        fontSize: 18,
+        color: Colors.blue.shade700,
         fontWeight: FontWeight.w700,
       );
 

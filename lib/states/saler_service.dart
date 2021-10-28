@@ -114,7 +114,7 @@ class _SalerServiceState extends State<SalerService> {
           Navigator.pop(context);
         });
       },
-      leading: Icon(Icons.filter_1_outlined),
+      leading: Icon(Icons.article_outlined),
       title: ShowTitle(
         title: 'Show Order',
         textStyle: MyConstant().h2Style(),
@@ -134,7 +134,7 @@ class _SalerServiceState extends State<SalerService> {
           Navigator.pop(context);
         });
       },
-      leading: Icon(Icons.filter_2),
+      leading: Icon(Icons.list),
       title: ShowTitle(
         title: 'Shop Manage',
         textStyle: MyConstant().h2Style(),
@@ -154,7 +154,7 @@ class _SalerServiceState extends State<SalerService> {
           Navigator.pop(context);
         });
       },
-      leading: Icon(Icons.filter_3),
+      leading: Icon(Icons.storefront),
       title: ShowTitle(
         title: 'Show Product',
         textStyle: MyConstant().h2Style(),

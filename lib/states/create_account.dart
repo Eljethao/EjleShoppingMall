@@ -297,7 +297,7 @@ class _CreateAccountState extends State<CreateAccount> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: passwordController,
               validator: (value) {
@@ -332,7 +332,7 @@ class _CreateAccountState extends State<CreateAccount> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: userController,
               validator: (value) {
@@ -367,7 +367,7 @@ class _CreateAccountState extends State<CreateAccount> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: phoneController,
               keyboardType: TextInputType.phone,
@@ -403,7 +403,7 @@ class _CreateAccountState extends State<CreateAccount> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: addressController,
               validator: (value) {
@@ -524,7 +524,7 @@ class _CreateAccountState extends State<CreateAccount> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: nameController,
               validator: (value) {

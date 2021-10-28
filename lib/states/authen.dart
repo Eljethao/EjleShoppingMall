@@ -36,8 +36,11 @@ class _AuthenState extends State<Authen> {
             key: formKey,
             child: ListView(
               children: [
+                SizedBox(height: 20),
                 buildImage(size),
+                SizedBox(height: 20),
                 buildAppName(),
+                SizedBox(height: 40),
                 buildUser(size),
                 buildPassword(size),
                 buildLogin(size),
@@ -73,7 +76,7 @@ class _AuthenState extends State<Authen> {
       children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: ElevatedButton(
             style: MyConstant().myButtonStyle(),
             onPressed: () {
@@ -94,7 +97,7 @@ class _AuthenState extends State<Authen> {
   Future<void> checkAuthen({String? user, String? password}) async {
     String apiCheckAuthen =
         '${MyConstant.domain}/eljeshoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(apiCheckAuthen).then((value) async{
+    await Dio().get(apiCheckAuthen).then((value) async {
       print('### value for API ==> $value');
       if (value.toString() == 'null') {
         MyDialog().normalDialog(context, 'User Faile', 'No $user in Database');
@@ -106,9 +109,10 @@ class _AuthenState extends State<Authen> {
             String type = model.type;
             print('## Authen Success in Type =>> $type');
 
-            SharedPreferences preferences = await SharedPreferences.getInstance();
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
             preferences.setString('id', model.id);
-            preferences.setString('type',type);
+            preferences.setString('type', type);
             preferences.setString('user', model.user);
             preferences.setString('name', model.name);
 
@@ -143,7 +147,7 @@ class _AuthenState extends State<Authen> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: userController,
               validator: (value) {
@@ -180,7 +184,7 @@ class _AuthenState extends State<Authen> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: size * 0.6,
+          width: size * 0.7,
           child: TextFormField(
               controller: passwordController,
               validator: (value) {
