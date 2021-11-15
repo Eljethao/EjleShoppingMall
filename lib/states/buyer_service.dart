@@ -34,7 +34,7 @@ class _BuyerServiceState extends State<BuyerService> {
             icon: Icon(Icons.shopping_cart_outlined),
           ),
         ],
-        title: Text('Buyer'),
+        title: Text('Buyer',style: TextStyle(fontFamily: 'NotoSansLao',fontWeight: FontWeight.bold),),
       ),
       drawer: Drawer(
         child: Stack(

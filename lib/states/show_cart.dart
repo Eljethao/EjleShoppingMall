@@ -82,7 +82,7 @@ class _ShowCartState extends State<ShowCart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Show Cart'),
+        title: const Text('Show Cart',style:TextStyle(fontFamily: 'Montserrat',fontWeight:FontWeight.bold)),
       ),
       body: load
           ? const ShowProgress()

@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 class MyConstant {
   //General
   static String appName = 'Shopping Mall';
-  static String domain = 'http://b8bf-115-84-117-69.ngrok.io';
+  static String domain = 'http://4bad-115-84-71-197.ngrok.io';
 
   //Route
   static String routeAuthen = '/authen';
@@ -51,12 +51,14 @@ class MyConstant {
         fontSize: 24,
         color: dark,
         fontWeight: FontWeight.bold,
+        fontFamily: 'NotoSansLao'
       );
 
   TextStyle h2Style() => TextStyle(
         fontSize: 18,
         color: dark,
         fontWeight: FontWeight.w700,
+        fontFamily: 'NotoSansLao'
       );
 
   TextStyle h2WhiteStyle() => const TextStyle(
@@ -81,6 +83,7 @@ class MyConstant {
         fontSize: 14,
         color: dark,
         fontWeight: FontWeight.normal,
+        fontFamily: 'NotoSansLao'
       );
 
   TextStyle h3WhiteStyle() => const TextStyle(
